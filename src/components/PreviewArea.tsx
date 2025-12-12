@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, MouseEvent } from 'react';
 import { PolaroidConfig } from '../types';
-import { RefreshCcw, Upload, Download, Image as ImageIcon } from 'lucide-react';
+import { RefreshCcw, Upload, Download } from 'lucide-react';
 
 interface PreviewAreaProps {
   config: PolaroidConfig;
@@ -260,15 +260,7 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                                 </>
                                 ) : (
                                     /* Empty State / Upload Placeholder */
-                                    <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer group hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200">
-                                        <div className="w-full h-full flex flex-col items-center justify-center border-2 border-dashed border-stone-300 dark:border-white/10 rounded-lg m-2 opacity-60 group-hover:opacity-100 group-hover:border-stone-400 dark:group-hover:border-white/30 transition-all">
-                                            <div className="p-3 rounded-full bg-stone-200 dark:bg-white/10 mb-2 group-hover:scale-110 transition-transform duration-200">
-                                                <ImageIcon size={24} className="text-stone-400 dark:text-stone-500" />
-                                            </div>
-                                            <span className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">
-                                                Click to Add Photo
-                                            </span>
-                                        </div>
+                                    <label className="w-full h-full flex items-center justify-center cursor-pointer group hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200">
                                         <input type="file" accept="image/*" className="hidden" onChange={onUpload} />
                                     </label>
                                 )}
@@ -298,13 +290,13 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                                     </div>
                                 )}
                                 
-                                {/* Date */}
+                                {/* Date - Fixed to Roboto Mono */}
                                 {config.date && (
                                     <div 
                                         className={`absolute bottom-0 right-0 text-[10px] font-medium tracking-[0.1em] uppercase z-10`}
                                         style={{ 
                                             color: config.textColor,
-                                            fontFamily: config.fontFamily,
+                                            fontFamily: '"Roboto Mono", monospace',
                                             opacity: 0.85,
                                         }}
                                     >

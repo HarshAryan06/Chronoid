@@ -96,10 +96,10 @@ const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFilter })
   const containerClasses = "w-full border-2 border-stone-800 dark:border-stone-200 rounded-xl bg-white dark:bg-[#1E1E1E] shadow-[2px_2px_0px_0px_rgba(28,25,23,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)] transition-all";
 
   return (
-    <div className="w-full md:w-[340px] h-auto md:h-screen bg-stone-100 dark:bg-[#121212] md:overflow-y-auto flex flex-col items-center select-none font-sans transition-colors duration-0 border-r border-stone-200 dark:border-white/5 rounded-t-3xl md:rounded-none -mt-6 md:mt-0 relative z-30 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] md:shadow-none">
+    <div className="w-full md:w-[340px] h-auto md:h-screen bg-stone-100 dark:bg-[#121212] flex flex-col items-center select-none font-sans transition-colors duration-0 border-r border-stone-200 dark:border-white/5 rounded-t-3xl md:rounded-none -mt-6 md:mt-0 relative z-30 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] md:shadow-none md:overflow-hidden">
       
-      {/* Scrollable Content Wrapper - significantly increased bottom padding (md:pb-64) */}
-      <div className="w-full max-w-[340px] p-6 md:p-8 flex flex-col gap-8 pb-32 md:pb-64">
+      {/* Scrollable Content Wrapper */}
+      <div className="w-full max-w-[340px] p-6 md:p-8 flex flex-col gap-8 flex-1 md:overflow-y-auto">
         
         {/* Header - Desktop Only */}
         <div className="hidden md:block -mb-2">
@@ -354,19 +354,19 @@ const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFilter })
             </div>
           </div>
         </div>
-        
-        {/* Footer Credit */}
-        <div className="w-full flex justify-center mt-2">
-             <a 
-                href="https://github.com/HarshAryan06"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[11px] font-bold tracking-[0.2em] uppercase text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition-colors font-sans flex items-center gap-2 group"
-             >
-                Built by Harsh Aryan
-                <ExternalLink size={10} className="opacity-0 group-hover:opacity-100 transition-opacity -mt-0.5" />
-             </a>
-        </div>
+      </div>
+      
+      {/* Footer Credit - Fixed at Bottom */}
+      <div className="w-full flex justify-center py-4 border-t border-stone-200 dark:border-white/5 bg-stone-100 dark:bg-[#121212] flex-shrink-0 z-20">
+           <a 
+              href="https://github.com/HarshAryan06"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] font-bold tracking-[0.2em] uppercase text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition-colors font-sans flex items-center gap-2 group"
+           >
+              Built by Harsh Aryan
+              <ExternalLink size={10} className="opacity-0 group-hover:opacity-100 transition-opacity -mt-0.5" />
+           </a>
       </div>
     </div>
   );
