@@ -1,0 +1,5 @@
+{
+  "name": "Chronoid_Polaroid",
+  "description": "A stylish Polaroid-style photo editor allowing users to upload images, customize frames, apply filters, and download high-quality memories.",
+  "requestFramePermissions": []
+}
