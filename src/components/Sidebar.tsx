@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Calendar, ChevronDown, Check, Plus, ExternalLink } from 'lucide-react';
+import { Calendar, ChevronDown, Check, Plus, ExternalLink, Sparkles, Loader2 } from 'lucide-react';
+import { GoogleGenAI, Type } from "@google/genai";
 import { PolaroidConfig } from '../types';
 import { COLORS, FRAME_COLORS, FONTS, FILTERS } from '../constants';
 import { CustomCalendar } from './CustomCalendar';
@@ -9,11 +10,13 @@ interface SidebarProps {
   config: PolaroidConfig;
   setConfig: React.Dispatch<React.SetStateAction<PolaroidConfig>>;
   onPreviewFilter?: (filter: string | null) => void;
+  imageSrc: string | null;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFilter }) => {
+const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFilter, imageSrc }) => {
   const [isFontDropdownOpen, setIsFontDropdownOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   
   // Track which color picker is open ('text' | 'frame' | null)
   const [activePicker, setActivePicker] = useState<'text' | 'frame' | null>(null);
@@ -89,6 +92,53 @@ const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFilter })
     }
   };
 
+  const handleMagicCaption = async () => {
+    if (!imageSrc || isGenerating) return;
+
+    setIsGenerating(true);
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      
+      // Extract base64 and mimeType
+      const match = imageSrc.match(/^data:(.+);base64,(.+)$/);
+      if (!match) throw new Error("Invalid image format");
+      
+      const mimeType = match[1];
+      const base64Data = match[2];
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: {
+          parts: [
+            { inlineData: { mimeType, data: base64Data } },
+            { text: "Analyze this image and provide a short, aesthetic, vintage-style caption (max 5-6 words) suitable for a polaroid photo bottom text. Also estimate the date or season/year if possible in dd.mm.yyyy format. If date is not clear, return today's date." }
+          ]
+        },
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              caption: { type: Type.STRING },
+              date: { type: Type.STRING }
+            },
+            required: ["caption", "date"]
+          }
+        }
+      });
+
+      const json = JSON.parse(response.text || '{}');
+      if (json.caption) handleChange('title', json.caption);
+      if (json.date) handleChange('date', json.date);
+
+    } catch (error) {
+      console.error("AI Generation Error:", error);
+      alert("Could not generate caption. Please ensure your API key is configured and try again.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   // Find current font name
   const currentFont = FONTS.find(f => f.value === config.fontFamily);
 
@@ -119,257 +169,8 @@ const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFilter })
 
         {/* Caption Input */}
         <div className="space-y-3">
-          <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Caption</label>
-          <input
-            type="text"
-            value={config.title}
-            onChange={(e) => handleChange('title', e.target.value)}
-            className={`${containerClasses} h-12 px-4 text-sm font-bold text-stone-800 dark:text-stone-100 focus:outline-none placeholder-stone-400 dark:placeholder-stone-600 focus:translate-y-[1px] focus:shadow-[1px_1px_0px_0px_rgba(28,25,23,1)] dark:focus:shadow-[1px_1px_0px_0px_rgba(255,255,255,0.2)]`}
-            placeholder="Add a caption..."
-          />
-        </div>
-
-        {/* Date Input with Custom Calendar Picker */}
-        <div className="space-y-3 relative" ref={calendarWrapperRef}>
-          <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Date</label>
-          <div 
-             className="relative group cursor-pointer"
-             onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-          >
-            <input
-              type="text" 
-              value={config.date}
-              readOnly 
-              className={`${containerClasses} h-12 pl-4 pr-12 text-sm font-bold text-stone-800 dark:text-stone-100 focus:outline-none placeholder-stone-400 dark:placeholder-stone-600 cursor-pointer pointer-events-none transition-all duration-200 ${
-                isCalendarOpen 
-                  ? 'translate-y-[1px] shadow-[1px_1px_0px_0px_rgba(28,25,23,1)] dark:shadow-[1px_1px_0px_0px_rgba(255,255,255,0.2)] bg-stone-50 dark:bg-white/5 border-stone-800 dark:border-white' 
-                  : 'group-active:translate-y-[1px] group-active:shadow-[1px_1px_0px_0px_rgba(28,25,23,1)] dark:group-active:shadow-[1px_1px_0px_0px_rgba(255,255,255,0.2)]'
-              }`}
-              placeholder="dd.mm.yyyy"
-            />
-             <div 
-                className={`absolute right-0 top-0 bottom-0 w-12 flex items-center justify-center cursor-pointer transition-transform duration-200 ${isCalendarOpen ? 'scale-110' : ''}`}
-             >
-              <Calendar className={`w-5 h-5 transition-colors ${isCalendarOpen ? 'text-stone-800 dark:text-stone-200' : 'text-stone-500 dark:text-stone-400 group-hover:text-stone-800 dark:group-hover:text-stone-200'}`} strokeWidth={2.5} />
-            </div>
-          </div>
-          
-          {/* Custom Calendar Dropdown - Centered */}
-          {isCalendarOpen && (
-              <div className="absolute z-50 left-1/2 -translate-x-1/2 top-full mt-3">
-                  <CustomCalendar 
-                      value={config.date} 
-                      onChange={(date) => handleChange('date', date)} 
-                      onClose={() => setIsCalendarOpen(false)}
-                  />
-              </div>
-          )}
-        </div>
-
-        {/* Text Colors */}
-        <div className="space-y-3">
-          <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Text Color</label>
-          <div className={`${containerClasses} p-4`}>
-              <div className="grid grid-cols-5 gap-4 justify-items-center">
-              {COLORS.map((color) => (
-                  <button
-                  key={color}
-                  onClick={() => handleChange('textColor', color)}
-                  className={`w-8 h-8 md:w-8 md:h-8 rounded-full flex items-center justify-center border-2 border-stone-800 dark:border-stone-200 transition-transform duration-200 hover:scale-110 active:scale-90 shadow-sm ${
-                      config.textColor.toLowerCase() === color.toLowerCase() ? 'ring-2 ring-stone-800 dark:ring-white ring-offset-2 dark:ring-offset-[#1E1E1E]' : ''
-                  }`}
-                  style={{ backgroundColor: color }}
-                  aria-label={`Select color ${color}`}
-                  />
-              ))}
-                {/* Custom Picker Button */}
-                <div className="relative" ref={textPickerRef}>
-                    <button
-                        onClick={() => setActivePicker(activePicker === 'text' ? null : 'text')}
-                        className={`w-8 h-8 md:w-8 md:h-8 rounded-full flex items-center justify-center border-2 border-stone-800 dark:border-stone-200 transition-transform duration-200 hover:scale-110 active:scale-90 shadow-sm overflow-hidden bg-[conic-gradient(at_center,_var(--tw-gradient-stops))] from-red-500 via-purple-500 to-blue-500 ${
-                            !COLORS.includes(config.textColor) ? 'ring-2 ring-stone-800 dark:ring-white ring-offset-2 dark:ring-offset-[#1E1E1E]' : ''
-                        }`}
-                    >
-                        <Plus className="text-white drop-shadow-md" size={14} />
-                    </button>
-                    {activePicker === 'text' && (
-                        <div className="absolute z-50 right-0 top-full mt-3 origin-top-right">
-                             <CustomColorPicker 
-                                color={config.textColor}
-                                onChange={(c) => handleChange('textColor', c)}
-                             />
-                        </div>
-                    )}
-               </div>
-              </div>
-          </div>
-        </div>
-
-        {/* Font Style */}
-        <div className="space-y-3">
-          <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Font Style</label>
-          
-          {/* Custom Font Dropdown with Preview */}
-          <div className="relative mb-3" ref={fontDropdownRef}>
-              <button
-                  onClick={() => setIsFontDropdownOpen(!isFontDropdownOpen)}
-                  className={`${containerClasses} h-12 px-4 flex items-center justify-between hover:bg-stone-50 dark:hover:bg-white/5 active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(28,25,23,1)] dark:active:shadow-[1px_1px_0px_0px_rgba(255,255,255,0.2)]`}
-              >
-                  <span className="truncate text-stone-800 dark:text-stone-100 text-base font-bold" style={{ fontFamily: config.fontFamily }}>
-                      {currentFont?.name || 'Select Font'}
-                  </span>
-                  <ChevronDown size={16} strokeWidth={2.5} className={`text-stone-800 dark:text-stone-100 transition-transform duration-200 ${isFontDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
-              
-              {isFontDropdownOpen && (
-                  <div className="absolute z-50 left-0 right-0 top-full mt-2 bg-white dark:bg-[#1E1E1E] border-2 border-stone-800 dark:border-stone-200 rounded-xl shadow-[3px_3px_0px_0px_rgba(28,25,23,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.2)] max-h-64 overflow-y-auto w-full">
-                      {FONTS.map((font) => (
-                          <button
-                              key={font.value}
-                              onClick={() => {
-                                  handleChange('fontFamily', font.value);
-                                  setIsFontDropdownOpen(false);
-                              }}
-                              className={`w-full text-left px-4 py-3 text-base hover:bg-stone-100 dark:hover:bg-white/10 flex items-center justify-between group transition-all duration-200 hover:pl-6 ${
-                                  config.fontFamily === font.value ? 'bg-stone-50 dark:bg-white/5 text-stone-800 dark:text-white' : 'text-stone-700 dark:text-stone-300'
-                              }`}
-                          >
-                              <span style={{ fontFamily: font.value }}>{font.name}</span>
-                              {config.fontFamily === font.value && (
-                                  <Check size={14} className="text-stone-800 dark:text-white" />
-                              )}
-                          </button>
-                      ))}
-                  </div>
-              )}
-          </div>
-
-          <div className="flex gap-3">
-            {[
-              { label: 'B', key: 'isBold', class: 'font-bold' },
-              { label: 'I', key: 'isItalic', class: 'italic' },
-              { label: 'U', key: 'isUnderline', class: 'underline underline-offset-4' },
-              { label: 'S', key: 'isStrikethrough', class: 'line-through' },
-            ].map((btn) => {
-              const isActive = config[btn.key as keyof PolaroidConfig];
-              return (
-                <button
-                  key={btn.key}
-                  onClick={() => handleChange(btn.key as keyof PolaroidConfig, !isActive)}
-                  className={`flex-1 h-11 flex items-center justify-center border-2 rounded-xl transition-all duration-200 text-sm shadow-[2px_2px_0px_0px_rgba(28,25,23,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)] hover:translate-y-[-1px] hover:shadow-[3px_3px_0px_0px_rgba(28,25,23,1)] dark:hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.2)] active:translate-y-[2px] active:shadow-none ${btn.class} ${
-                    isActive 
-                    ? 'bg-stone-800 dark:bg-stone-200 border-stone-800 dark:border-stone-200 text-white dark:text-stone-900' 
-                    : 'bg-white dark:bg-[#1E1E1E] border-stone-800 dark:border-stone-200 text-stone-800 dark:text-stone-200'
-                  }`}
-                >
-                  {btn.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Frame Color */}
-        <div className="space-y-3">
-          <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Frame Color</label>
-          <div className={`${containerClasses} p-4`}>
-              <div className="grid grid-cols-5 gap-4 justify-items-center">
-              {FRAME_COLORS.map((color) => (
-                  <button
-                  key={color}
-                  onClick={() => handleChange('frameColor', color)}
-                  className={`w-8 h-8 md:w-8 md:h-8 rounded-full border-2 border-stone-800 dark:border-stone-200 transition-transform duration-200 hover:scale-110 active:scale-90 shadow-sm ${
-                      config.frameColor.toLowerCase() === color.toLowerCase() ? 'ring-2 ring-stone-800 dark:ring-white ring-offset-2 dark:ring-offset-[#1E1E1E]' : ''
-                  }`}
-                  style={{ backgroundColor: color }}
-                  aria-label={`Select frame color ${color}`}
-                  />
-              ))}
-               {/* Custom Picker Button */}
-               <div className="relative" ref={framePickerRef}>
-                    <button
-                        onClick={() => setActivePicker(activePicker === 'frame' ? null : 'frame')}
-                        className={`w-8 h-8 md:w-8 md:h-8 rounded-full flex items-center justify-center border-2 border-stone-800 dark:border-stone-200 transition-transform duration-200 hover:scale-110 active:scale-90 shadow-sm overflow-hidden bg-[conic-gradient(at_center,_var(--tw-gradient-stops))] from-red-500 via-purple-500 to-blue-500 ${
-                            !FRAME_COLORS.includes(config.frameColor) ? 'ring-2 ring-stone-800 dark:ring-white ring-offset-2 dark:ring-offset-[#1E1E1E]' : ''
-                        }`}
-                    >
-                        <Plus className="text-white drop-shadow-md" size={14} />
-                    </button>
-                    {activePicker === 'frame' && (
-                        <div className="absolute z-50 right-0 top-full mt-3 origin-top-right">
-                             <CustomColorPicker 
-                                color={config.frameColor}
-                                onChange={(c) => handleChange('frameColor', c)}
-                             />
-                        </div>
-                    )}
-               </div>
-              </div>
-          </div>
-        </div>
-
-        {/* Corner Radius */}
-        <div className="space-y-3">
-          <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Corner Radius</label>
-          
-          <div className={`${containerClasses} p-4 flex items-center gap-4 h-12`}>
-             <input
-              type="range"
-              min="0"
-              max="30"
-              value={config.cornerRadius}
-              onChange={(e) => handleChange('cornerRadius', parseInt(e.target.value))}
-              className="flex-1 h-1.5 bg-stone-200 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-stone-800 dark:accent-white transition-all duration-200"
-             />
-             <span className="text-xs font-bold text-stone-600 dark:text-stone-300 w-8 text-right font-mono">{config.cornerRadius}px</span>
-          </div>
-        </div>
-
-        {/* Filters */}
-        <div className="space-y-3">
-          <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Filters</label>
-          <div className={`${containerClasses} p-4`}>
-            <div className="grid grid-cols-4 gap-4 justify-items-center">
-                {FILTERS.map((filter) => (
-                <button
-                    key={filter.name}
-                    onClick={() => handleChange('filter', filter.value)}
-                    onMouseEnter={() => onPreviewFilter?.(filter.value)}
-                    onMouseLeave={() => onPreviewFilter?.(null)}
-                    className="flex flex-col items-center gap-2 group"
-                    title={filter.name}
-                >
-                    <div
-                    className={`w-12 h-12 rounded-full border-2 transition-all duration-300 ease-out overflow-hidden group-hover:scale-110 group-hover:shadow-lg group-active:scale-95 shadow-sm ${
-                        config.filter === filter.value ? 'border-stone-800 dark:border-white scale-105' : 'border-stone-300 dark:border-stone-600'
-                    }`}
-                    >
-                    <div className={`w-full h-full bg-cover bg-center ${filter.previewColor}`} style={{ 
-                        filter: filter.value,
-                        backgroundImage: 'url("https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=100&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bW91bnRhaW58ZW58MHx8MHx8fDA%3D")' 
-                    }}></div>
-                    </div>
-                </button>
-                ))}
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Footer Credit - Fixed at Bottom */}
-      <div className="w-full flex justify-center py-4 border-t border-stone-200 dark:border-white/5 bg-stone-100 dark:bg-[#121212] flex-shrink-0 z-20">
-           <a 
-              href="https://github.com/HarshAryan06"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[11px] font-bold tracking-[0.2em] uppercase text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition-colors font-sans flex items-center gap-2 group"
-           >
-              Built by Harsh Aryan
-              <ExternalLink size={10} className="opacity-0 group-hover:opacity-100 transition-opacity -mt-0.5" />
-           </a>
-      </div>
-    </div>
-  );
-};
-
-export default Sidebar;
+          <div className="flex justify-between items-center">
+            <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Caption</label>
+            <button 
+              onClick={handleMagicCaption}
+              disabled={!imageSrc || isGenerating}
