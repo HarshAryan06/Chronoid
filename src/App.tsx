@@ -7,10 +7,7 @@ import { DEFAULT_CONFIG } from './constants';
 import * as htmlToImage from 'html-to-image';
 import { Github, Moon, Sun } from 'lucide-react';
 
-// --- Restructured Components ---
-
-// Reusable Header Actions (Theme Toggle & Social Links)
-// Handles both Mobile (Glassmorphism) and Desktop (Clean) styles via responsive classes
+// --- Header Actions Component (Theme & Socials) ---
 const HeaderActions: React.FC<{ isDarkMode: boolean; toggleTheme: (e: React.MouseEvent) => void }> = ({ isDarkMode, toggleTheme }) => (
   <div className="flex items-center gap-2 md:gap-3">
     <button 
@@ -43,6 +40,7 @@ const HeaderActions: React.FC<{ isDarkMode: boolean; toggleTheme: (e: React.Mous
   </div>
 );
 
+// --- Main App Component ---
 const App: React.FC = () => {
   const [config, setConfig] = useState<PolaroidConfig>(DEFAULT_CONFIG);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -50,6 +48,7 @@ const App: React.FC = () => {
   const [previewFilter, setPreviewFilter] = useState<string | null>(null);
   const captureRef = useRef<HTMLDivElement>(null);
 
+  // Sync Dark Mode Class
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
@@ -58,8 +57,9 @@ const App: React.FC = () => {
     }
   }, [isDarkMode]);
 
+  // View Transition Theme Toggle
   const toggleTheme = async (event: React.MouseEvent) => {
-    // @ts-ignore - View Transitions API
+    // @ts-ignore - View Transitions API support
     if (!document.startViewTransition) {
       setIsDarkMode(!isDarkMode);
       return;
@@ -82,6 +82,7 @@ const App: React.FC = () => {
     });
   };
 
+  // Handlers
   const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -119,9 +120,7 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col md:flex-row min-h-screen w-full bg-stone-50 dark:bg-[#0a0a0a] font-sans transition-colors duration-0">
       
-      {/* Mobile Header - Fixed Floating Pill 
-          This uses 'fixed' positioning to float above content, with rounded-full for the pill shape.
-      */}
+      {/* Mobile Header: Fixed Floating Pill */}
       <div className="md:hidden fixed top-5 left-4 right-4 h-16 px-6 shrink-0 flex justify-between items-center z-[100] transition-all duration-300 bg-white/90 dark:bg-[#121212]/90 backdrop-blur-2xl border border-stone-200/80 dark:border-white/10 rounded-full shadow-xl shadow-stone-200/50 dark:shadow-black/20 ring-1 ring-white/50 dark:ring-white/5">
           <div className="flex flex-col justify-center">
             <h1 className="text-xl font-logo font-bold tracking-tight text-stone-800 dark:text-stone-100 leading-none drop-shadow-sm">Chronoid</h1>
@@ -133,17 +132,17 @@ const App: React.FC = () => {
       <div className="flex flex-col md:flex-row flex-1 w-full">
         {/* Sidebar */}
         <div className="order-2 md:order-1 w-full md:w-auto z-10">
-           <Sidebar config={config} setConfig={setConfig} onPreviewFilter={setPreviewFilter} />
+           <Sidebar config={config} setConfig={setConfig} onPreviewFilter={setPreviewFilter} imageSrc={imageSrc} />
         </div>
 
-        {/* Main Content */}
+        {/* Main Content Area */}
         <div className="order-1 md:order-2 flex-1 relative flex flex-col min-h-0 bg-sand dark:bg-[#0a0a0a]">
             {/* Desktop Top Right Tools */}
             <div className="absolute top-6 right-6 z-30 hidden md:flex">
                 <HeaderActions isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
             </div>
 
-            {/* Spacer for Fixed Header on Mobile - Prevents content from being hidden behind the floating pill */}
+            {/* Spacer for Fixed Header on Mobile */}
             <div className="md:hidden h-24 w-full bg-transparent shrink-0" />
 
             <PreviewArea 

@@ -15,8 +15,6 @@ interface CustomColorPickerProps {
   onClose?: () => void;
 }
 
-// --- Helpers ---
-
 const hexToHsv = (hex: string) => {
   let r = 0, g = 0, b = 0;
   if (hex.length === 4) {
@@ -79,18 +77,13 @@ const hsvToHex = (h: number, s: number, v: number) => {
 };
 
 export const CustomColorPicker: React.FC<CustomColorPickerProps> = ({ color, onChange }) => {
-  // Internal state for HSV to allow smooth dragging without quantization errors
   const [hsv, setHsv] = useState(() => hexToHsv(color));
   const [isDragging, setIsDragging] = useState(false);
   const areaRef = useRef<HTMLDivElement>(null);
 
-  // Sync internal HSV if external color prop changes significantly
   useEffect(() => {
-    // Only update if not currently dragging to prevent loops/jitter
     if (!isDragging) {
         const newHsv = hexToHsv(color);
-        // Simple check to avoid resetting H if color is black/white (where H is undefined/0)
-        // We preserve the previous H if the new color is grayscale
         if (newHsv.s === 0) {
             setHsv(prev => ({ ...newHsv, h: prev.h }));
         } else {
@@ -152,7 +145,6 @@ export const CustomColorPicker: React.FC<CustomColorPickerProps> = ({ color, onC
   const handleHexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const val = e.target.value;
       if (/^#[0-9A-F]{0,6}$/i.test(val)) {
-          // Allow typing incomplete hex
           if (val.length === 7) {
              onChange(val);
           }
@@ -175,7 +167,6 @@ export const CustomColorPicker: React.FC<CustomColorPickerProps> = ({ color, onC
         className="p-3 bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-xl border border-stone-200 dark:border-white/10 w-[260px] flex flex-col gap-3 font-sans animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
     >
-      {/* Saturation/Value Area */}
       <div 
         ref={areaRef}
         className="w-full h-32 rounded-lg relative cursor-crosshair overflow-hidden shadow-inner ring-1 ring-black/5"
@@ -195,9 +186,7 @@ export const CustomColorPicker: React.FC<CustomColorPickerProps> = ({ color, onC
         />
       </div>
 
-      {/* Sliders Row */}
       <div className="flex items-center gap-3">
-        {/* Eye Dropper */}
         {'EyeDropper' in window && (
             <button 
                 onClick={handleEyeDropper}
@@ -208,7 +197,6 @@ export const CustomColorPicker: React.FC<CustomColorPickerProps> = ({ color, onC
             </button>
         )}
 
-        {/* Hue Slider */}
         <div className="flex-1 h-4 relative rounded-full overflow-hidden shadow-inner ring-1 ring-black/5">
             <input 
                 type="range" 
@@ -219,7 +207,6 @@ export const CustomColorPicker: React.FC<CustomColorPickerProps> = ({ color, onC
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
             />
             <div className="w-full h-full" style={{ background: 'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)' }} />
-            {/* Hue Indicator */}
             <div 
                 className="absolute top-0 bottom-0 w-2 bg-white border border-stone-300 shadow-sm rounded-full pointer-events-none"
                 style={{ left: `calc(${(hsv.h / 360) * 100}% - 4px)` }}
@@ -227,7 +214,6 @@ export const CustomColorPicker: React.FC<CustomColorPickerProps> = ({ color, onC
         </div>
       </div>
 
-      {/* Hex Input Row */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex-1 flex items-center gap-2 bg-stone-50 dark:bg-black/30 border border-stone-200 dark:border-white/10 rounded-lg px-2 h-9">
             <span className="text-xs font-bold text-stone-400 dark:text-stone-500">HEX</span>

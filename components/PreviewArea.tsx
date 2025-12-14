@@ -80,7 +80,6 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
 
   const handleMouseEnter = () => {
     if (isMobile) return;
-    // Switch to fast transition for hover interaction
     const elements = [containerRef.current, deepShadowRef.current, midShadowRef.current, glossRef.current, reflectionRef.current];
     elements.forEach(el => {
         if (el) el.style.transition = 'transform 0.1s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.3s ease';
@@ -89,8 +88,6 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
 
   const handleMouseLeave = () => {
     if (isMobile) return;
-    
-    // Reset to idle state with smooth return transition
     const slowTransition = 'transform 0.8s cubic-bezier(0.445, 0.05, 0.55, 0.95), opacity 0.3s ease';
     
     if (containerRef.current) {
@@ -120,7 +117,6 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
   // Dynamic Shadow Configuration
   const shadowColor = isDarkMode ? config.frameColor : '#000000';
   const shadowMixBlendMode = isDarkMode ? 'normal' : 'multiply'; 
-
   const deepShadowOpacity = isDarkMode ? 0.06 : 0.08; 
   const deepShadowBlur = 'blur(24px)';
   const midShadowOpacity = isDarkMode ? 0.02 : 0.03;
@@ -128,7 +124,7 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
   return (
     <div className="flex-1 w-full relative font-mono isolate h-auto md:h-full">
       
-      {/* Vintage Grid Pattern Background */}
+      {/* Background Pattern */}
       <div 
         className="absolute inset-0 opacity-[0.4] dark:opacity-[0.1] pointer-events-none -z-10 transition-opacity"
         style={{
@@ -141,7 +137,7 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
       <div className="relative w-full h-auto md:absolute md:inset-0 md:overflow-y-auto md:overflow-x-hidden">
         <div className="min-h-[500px] md:min-h-full flex flex-col items-center justify-center p-6 md:p-8 gap-6 md:gap-8">
             
-            {/* Polaroid Preview Container with 3D Tilt */}
+            {/* 3D Container */}
             <div 
                 className="relative w-full flex justify-center max-w-[400px] perspective-[1000px] cursor-grab active:cursor-grabbing"
                 onMouseMove={handleMouseMove}
@@ -153,54 +149,34 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                 <div 
                     ref={containerRef}
                     className="relative w-full will-change-transform"
-                    style={{
-                        transformStyle: 'preserve-3d',
-                        transform: 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
-                    }}
+                    style={{ transformStyle: 'preserve-3d', transform: 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)' }}
                 >
-                     {/* Enhanced Shadow System - Visual Only */}
-                    
-                    {/* 1. Deep Ambient Shadow */}
+                     {/* Shadows */}
                     <div 
                         ref={deepShadowRef}
                         className="absolute w-full h-full will-change-transform"
                         style={{ 
-                            top: '25px',
-                            left: '15px',
+                            top: '25px', left: '15px',
                             borderRadius: `${config.cornerRadius}px`, 
-                            filter: deepShadowBlur, 
-                            backgroundColor: shadowColor,
-                            opacity: deepShadowOpacity, 
-                            transform: 'translateZ(-60px)',
+                            filter: deepShadowBlur, backgroundColor: shadowColor,
+                            opacity: deepShadowOpacity, transform: 'translateZ(-60px)',
                             mixBlendMode: shadowMixBlendMode as any,
                         }}
                     ></div>
-
-                    {/* 2. Mid-tone Shadow */}
                     <div 
                         ref={midShadowRef}
                         className="absolute w-full h-full will-change-transform"
                         style={{ 
-                            top: '10px',
-                            left: '5px',
+                            top: '10px', left: '5px',
                             borderRadius: `${config.cornerRadius}px`,
-                            filter: 'blur(12px)',
-                            backgroundColor: shadowColor,
-                            opacity: midShadowOpacity,
-                            transform: 'translateZ(-30px)',
+                            filter: 'blur(12px)', backgroundColor: shadowColor,
+                            opacity: midShadowOpacity, transform: 'translateZ(-30px)',
                             mixBlendMode: shadowMixBlendMode as any,
                         }}
                     ></div>
                     
-                    {/* Capture Wrapper */}
-                    <div
-                        ref={captureRef}
-                        style={{
-                            width: '100%',
-                            padding: '30px',
-                        }}
-                    >
-                        {/* The Actual Polaroid Frame */}
+                    {/* Capture Target */}
+                    <div ref={captureRef} style={{ width: '100%', padding: '30px' }}>
                         <div
                             ref={frameRef}
                             className="relative"
@@ -211,21 +187,16 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                                 boxShadow: isDarkMode 
                                     ? `0 0 0 1px ${config.frameColor}20, 0 15px 30px -10px rgba(0, 0, 0, 0.5)`
                                     : '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -5px rgba(0, 0, 0, 0.05)',
-                                border: isDarkMode 
-                                    ? 'none'
-                                    : '1px solid rgba(0,0,0,0.02)',
+                                border: isDarkMode ? 'none' : '1px solid rgba(0,0,0,0.02)',
                                 borderRadius: `${config.cornerRadius}px`,
-                                display: 'flex',
-                                flexDirection: 'column',
+                                display: 'flex', flexDirection: 'column',
                                 transition: 'background-color 0.3s ease',
                             }}
                         >
-                            {/* Image Container */}
+                            {/* Photo Area */}
                             <div 
-                                className="w-full aspect-square overflow-hidden relative group"
-                                style={{ 
-                                    borderRadius: `${Math.max(0, config.cornerRadius - 2)}px`,
-                                }}
+                                className="w-full aspect-square overflow-hidden relative group bg-stone-100 dark:bg-black/5"
+                                style={{ borderRadius: `${Math.max(0, config.cornerRadius - 2)}px` }}
                             >
                                 {imageSrc ? (
                                 <>
@@ -235,65 +206,44 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                                         className="w-full h-full object-cover transition-all duration-300"
                                         style={{ filter: config.filter }}
                                     />
-                                    {/* Texture Overlay */}
                                     <div className="absolute inset-0 opacity-[0.08] pointer-events-none mix-blend-overlay z-10"
-                                        style={{
-                                            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                                        }}
+                                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
                                     ></div>
-                                    
-                                    {/* Reactive Glossy Sheen Overlay */}
                                     <div 
                                         ref={glossRef}
                                         className="absolute -inset-[100%] pointer-events-none z-20 mix-blend-soft-light will-change-transform"
                                         style={{
-                                            background: `linear-gradient(
-                                                115deg, 
-                                                transparent 40%, 
-                                                rgba(255,255,255,${isDarkMode ? 0.1 : 0.2}) 48%, 
-                                                rgba(255,255,255,${isDarkMode ? 0.03 : 0.08}) 52%, 
-                                                transparent 60%
-                                            )`,
+                                            background: `linear-gradient(115deg, transparent 40%, rgba(255,255,255,${isDarkMode ? 0.1 : 0.2}) 48%, rgba(255,255,255,${isDarkMode ? 0.03 : 0.08}) 52%, transparent 60%)`,
                                             opacity: 0,
                                         }}
                                     />
                                 </>
-                                ) : null}
+                                ) : (
+                                    <label className="w-full h-full flex items-center justify-center cursor-pointer group hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200">
+                                        <input type="file" accept="image/*" className="hidden" onChange={onUpload} />
+                                    </label>
+                                )}
                             </div>
 
-                            {/* Chin / Text Content Area */}
-                            <div 
-                                className="relative mt-4 min-h-[60px] flex flex-col pointer-events-none"
-                            >
-                                {/* Title */}
+                            {/* Caption Area */}
+                            <div className="relative mt-4 min-h-[60px] flex flex-col pointer-events-none">
                                 {config.title && (
                                     <div 
                                         className={`text-left leading-tight break-words ${config.isBold ? 'font-bold' : ''} ${config.isItalic ? 'italic' : ''} ${config.isUnderline ? 'underline' : ''} ${config.isStrikethrough ? 'line-through' : ''}`}
                                         style={{ 
-                                            color: config.textColor, 
-                                            fontSize: '1rem', 
-                                            fontFamily: config.fontFamily,
-                                            width: '100%',
-                                            maxHeight: '48px',
-                                            overflow: 'hidden',
-                                            display: '-webkit-box',
-                                            WebkitLineClamp: 2,
-                                            WebkitBoxOrient: 'vertical',
+                                            color: config.textColor, fontSize: '1rem', 
+                                            fontFamily: config.fontFamily, width: '100%',
+                                            maxHeight: '48px', overflow: 'hidden',
+                                            display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
                                         }}
                                     >
                                         {config.title}
                                     </div>
                                 )}
-                                
-                                {/* Date */}
                                 {config.date && (
                                     <div 
-                                        className={`absolute bottom-0 right-0 text-[10px] font-medium tracking-[0.1em] uppercase z-10`}
-                                        style={{ 
-                                            color: config.textColor,
-                                            fontFamily: config.fontFamily,
-                                            opacity: 0.85,
-                                        }}
+                                        className="absolute bottom-0 right-0 text-[10px] font-medium tracking-[0.1em] uppercase z-10"
+                                        style={{ color: config.textColor, fontFamily: '"Roboto Mono", monospace', opacity: 0.85 }}
                                     >
                                         {config.date}
                                     </div>
@@ -302,7 +252,7 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                         </div>
                     </div>
                     
-                    {/* Glossy Reflection Overlay */}
+                    {/* Reflection */}
                     <div 
                         ref={reflectionRef}
                         className="absolute inset-0 pointer-events-none z-50 mix-blend-soft-light will-change-transform"
@@ -315,26 +265,21 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                 </div>
             </div>
 
-            {/* Action Buttons Area */}
+            {/* Buttons */}
             <div className="w-full max-w-[400px] flex flex-col gap-2 pb-2 md:pb-0 z-10 font-sans">
                 <div className="flex gap-2 w-full">
-                    {/* Animated Reset Button */}
                     <button
                         onClick={onReset}
-                        className="group relative flex-1 h-10 flex items-center justify-center overflow-hidden bg-white dark:bg-[#1E1E1E] border border-stone-800 dark:border-white/20 text-stone-800 dark:text-white text-sm font-bold shadow-[3px_3px_0px_0px_rgba(28,25,23,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.1)] transition-all hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(28,25,23,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.1)] active:translate-y-[3px] active:shadow-none rounded-lg"
-                        title="Clear Frame"
+                        className="group relative flex-1 h-12 flex items-center justify-center overflow-hidden bg-white dark:bg-[#1E1E1E] border-2 border-stone-800 dark:border-white/20 text-stone-800 dark:text-white text-sm font-bold shadow-[3px_3px_0px_0px_rgba(28,25,23,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.1)] transition-all hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(28,25,23,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.1)] active:translate-y-[3px] active:shadow-none rounded-xl"
                     >
-                        {/* Sliding Background Effect */}
                         <div className="absolute inset-0 bg-stone-800 dark:bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out will-change-transform" />
-                        
-                        {/* Content Wrapper */}
                         <div className="relative flex items-center gap-2 z-10 group-hover:text-white dark:group-hover:text-black transition-colors duration-200">
                             <RefreshCcw size={14} strokeWidth={2.5} className="group-hover:-rotate-180 transition-transform duration-500 ease-in-out" />
                             Reset
                         </div>
                     </button>
 
-                    <label className="flex-1 h-10 flex items-center justify-center gap-2 bg-stone-800 dark:bg-white border border-stone-800 dark:border-white text-white dark:text-black text-sm font-bold shadow-[3px_3px_0px_0px_rgba(28,25,23,0.25)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.15)] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(28,25,23,0.25)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.15)] active:translate-y-[3px] active:shadow-none transition-all cursor-pointer rounded-lg">
+                    <label className="flex-1 h-12 flex items-center justify-center gap-2 bg-stone-800 dark:bg-white border-2 border-stone-800 dark:border-white text-white dark:text-black text-sm font-bold shadow-[3px_3px_0px_0px_rgba(28,25,23,0.25)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.15)] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(28,25,23,0.25)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.15)] active:translate-y-[3px] active:shadow-none transition-all cursor-pointer rounded-xl">
                         <Upload size={14} strokeWidth={2.5} />
                         Upload
                         <input type="file" accept="image/*" className="hidden" onChange={onUpload} />
@@ -344,7 +289,7 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                 <button
                     onClick={onDownload}
                     disabled={!imageSrc}
-                    className={`w-full h-10 flex items-center justify-center gap-2 bg-stone-800 dark:bg-white text-white dark:text-black border border-stone-800 dark:border-white text-sm font-bold shadow-[3px_3px_0px_0px_rgba(28,25,23,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.15)] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(28,25,23,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.15)] active:translate-y-[3px] active:shadow-none transition-all rounded-lg ${!imageSrc ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`w-full h-12 flex items-center justify-center gap-2 bg-stone-800 dark:bg-white text-white dark:text-black border-2 border-stone-800 dark:border-white text-sm font-bold shadow-[3px_3px_0px_0px_rgba(28,25,23,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.15)] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(28,25,23,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.15)] active:translate-y-[3px] active:shadow-none transition-all rounded-xl ${!imageSrc ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                     <Download size={16} strokeWidth={2.5} />
                     Download

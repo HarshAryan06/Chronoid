@@ -27,6 +27,8 @@ export const FRAME_COLORS = [
 
 export const FONTS: FontOption[] = [
   { name: 'Nunito', value: '"Nunito", sans-serif' },
+  { name: 'Patrick Hand', value: '"Patrick Hand", cursive' },
+  { name: 'Sniglet', value: '"Sniglet", cursive' },
   { name: 'Roboto Mono', value: '"Roboto Mono", monospace' },
   { name: 'Inter', value: '"Inter", sans-serif' },
   { name: 'Playfair Display', value: '"Playfair Display", serif' },

@@ -14,25 +14,20 @@ const MONTHS = [
 ];
 
 export const CustomCalendar: React.FC<CustomCalendarProps> = ({ value, onChange, onClose }) => {
-  // Parse initial date
   const parseDate = (dateStr: string) => {
     if (!dateStr) return new Date();
     const parts = dateStr.split('.');
     if (parts.length !== 3) return new Date();
     const [d, m, y] = parts.map(Number);
     if (!d || !m || !y) return new Date();
-    // Month is 0-indexed in JS Date
     return new Date(y, m - 1, d);
   };
 
-  // State
   const [viewDate, setViewDate] = useState(() => parseDate(value));
   
-  // Years range generation (Current Year - 100 to Current Year + 20)
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 121 }, (_, i) => currentYear - 100 + i);
 
-  // Helper to get days in month
   const getDaysInMonth = (year: number, month: number) => {
     return new Date(year, month + 1, 0).getDate();
   };
@@ -60,7 +55,6 @@ export const CustomCalendar: React.FC<CustomCalendarProps> = ({ value, onChange,
   };
 
   const handleDayClick = (day: number) => {
-    // Format dd.mm.yyyy
     const d = String(day).padStart(2, '0');
     const m = String(viewDate.getMonth() + 1).padStart(2, '0');
     const y = viewDate.getFullYear();
@@ -75,14 +69,11 @@ export const CustomCalendar: React.FC<CustomCalendarProps> = ({ value, onChange,
     const firstDay = getFirstDayOfMonth(viewDate.getFullYear(), viewDate.getMonth());
     const days = [];
 
-    // Empty cells for offset
     for (let i = 0; i < firstDay; i++) {
       days.push(<div key={`empty-${i}`} className="w-8 h-8" />);
     }
 
-    // Days
     for (let i = 1; i <= daysInMonth; i++) {
-      // Check if this day corresponds to the currently selected value
       let isActive = false;
       const parts = value.split('.');
       if (parts.length === 3) {
@@ -118,7 +109,6 @@ export const CustomCalendar: React.FC<CustomCalendarProps> = ({ value, onChange,
         className="p-4 bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-xl border border-stone-200 dark:border-white/10 w-[280px] select-none animate-in fade-in zoom-in-95 duration-200 font-sans" 
         onClick={(e) => e.stopPropagation()}
     >
-      {/* Top Dropdowns Row */}
       <div className="flex gap-2 mb-4">
         <div className="relative flex-[0.8]">
             <select 
@@ -142,7 +132,6 @@ export const CustomCalendar: React.FC<CustomCalendarProps> = ({ value, onChange,
         </div>
       </div>
 
-      {/* Navigation Header */}
       <div className="flex items-center justify-between mb-4 px-1">
         <button 
             type="button"
@@ -163,7 +152,6 @@ export const CustomCalendar: React.FC<CustomCalendarProps> = ({ value, onChange,
         </button>
       </div>
 
-      {/* Weekdays */}
       <div className="grid grid-cols-7 mb-2">
         {DAYS.map(d => (
             <div key={d} className="text-center text-[10px] font-extrabold text-stone-400 dark:text-stone-500 uppercase tracking-wide">
@@ -172,7 +160,6 @@ export const CustomCalendar: React.FC<CustomCalendarProps> = ({ value, onChange,
         ))}
       </div>
 
-      {/* Days Grid */}
       <div className="grid grid-cols-7 gap-1 justify-items-center">
         {renderDays()}
       </div>
