@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Calendar, ChevronDown, Check, Plus, Sparkles, Loader2 } from 'lucide-react';
-import { GoogleGenAI, Type } from "@google/genai";
+import { Calendar, ChevronDown, Check, Plus } from 'lucide-react';
 import { PolaroidConfig } from '../types';
 import { COLORS, FRAME_COLORS, FONTS, FILTERS } from '../constants';
 import { CustomCalendar } from './CustomCalendar';
@@ -16,7 +15,6 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFilter, imageSrc }) => {
   const [isFontDropdownOpen, setIsFontDropdownOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
   
   // Track which color picker is open
   const [activePicker, setActivePicker] = useState<'text' | 'frame' | null>(null);
@@ -84,55 +82,6 @@ const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFilter, i
     }
   };
 
-  const handleMagicCaption = async () => {
-    if (!imageSrc || isGenerating) return;
-
-    setIsGenerating(true);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const match = imageSrc.match(/^data:(.+);base64,(.+)$/);
-      if (!match) throw new Error("Invalid image format");
-      
-      const mimeType = match[1];
-      const base64Data = match[2];
-
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: {
-          parts: [
-            { inlineData: { mimeType, data: base64Data } },
-            { text: "Analyze this image and provide a short, aesthetic, vintage-style caption (max 5-6 words) suitable for a polaroid photo bottom text. Also estimate the date or season/year if possible in dd.mm.yyyy format. If date is not clear, return today's date." }
-          ]
-        },
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              caption: { type: Type.STRING },
-              date: { type: Type.STRING }
-            },
-            required: ["caption", "date"]
-          }
-        }
-      });
-
-      // Cleanup JSON string in case the model wraps it in markdown code blocks
-      let jsonString = response.text || '{}';
-      jsonString = jsonString.replace(/```json/g, '').replace(/```/g, '').trim();
-
-      const json = JSON.parse(jsonString);
-      if (json.caption) handleChange('title', json.caption);
-      if (json.date) handleChange('date', json.date);
-
-    } catch (error) {
-      console.error("AI Generation Error:", error);
-      alert("Could not generate caption. Please ensure your API key is configured correctly.");
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
   const currentFont = FONTS.find(f => f.value === config.fontFamily);
   const containerClasses = "w-full border-2 border-stone-800 dark:border-stone-200 rounded-xl bg-white dark:bg-[#1E1E1E] shadow-[2px_2px_0px_0px_rgba(28,25,23,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)] transition-all";
 
@@ -160,15 +109,6 @@ const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFilter, i
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Caption</label>
-            <button 
-              onClick={handleMagicCaption}
-              disabled={!imageSrc || isGenerating}
-              className="flex items-center gap-1.5 px-2 py-1 text-xs font-bold text-stone-500 hover:text-purple-600 dark:text-stone-400 dark:hover:text-purple-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors rounded-md hover:bg-stone-200 dark:hover:bg-white/10"
-              title="Generate caption with AI"
-            >
-                {isGenerating ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
-                <span>Magic</span>
-            </button>
           </div>
           <input
             type="text"
@@ -299,7 +239,7 @@ const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFilter, i
                 <button
                   key={btn.key}
                   onClick={() => handleChange(btn.key as keyof PolaroidConfig, !isActive)}
-                  className={`flex-1 h-11 flex items-center justify-center border-2 rounded-xl transition-all duration-200 text-sm shadow-[2px_2px_0px_0px_rgba(28,25,23,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)] hover:translate-y-[-1px] hover:shadow-[3px_3px_0px_0px_rgba(28,25,23,1)] dark:hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.2)] active:translate-y-[2px] active:shadow-none ${btn.class} ${
+                  className={`flex-1 h-11 flex items-center justify-center border-2 rounded-xl transition-all duration-200 text-sm shadow-[2px_2px_0px_0px_rgba(28,25,23,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)] hover:translate-y-[-1px] hover:shadow-[3px_3px_0px_0px_rgba(28,25,23,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)] active:translate-y-[2px] active:shadow-none ${btn.class} ${
                     isActive 
                     ? 'bg-stone-800 dark:bg-stone-200 border-stone-800 dark:border-stone-200 text-white dark:text-stone-900' 
                     : 'bg-white dark:bg-[#1E1E1E] border-stone-800 dark:border-stone-200 text-stone-800 dark:text-stone-200'
