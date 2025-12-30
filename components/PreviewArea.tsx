@@ -23,7 +23,6 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
 }) => {
   const [isMobile, setIsMobile] = useState(false);
   
-  // Refs for direct DOM manipulation (High Performance / 120fps)
   const containerRef = useRef<HTMLDivElement>(null);
   const deepShadowRef = useRef<HTMLDivElement>(null);
   const midShadowRef = useRef<HTMLDivElement>(null);
@@ -31,12 +30,11 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
   const reflectionRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
 
-  // Check for mobile device to disable motion effects
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    checkMobile(); // Check on mount
+    checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
@@ -52,11 +50,9 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
     const centerX = box.width / 2;
     const centerY = box.height / 2;
     
-    // Sensitivity factor
     const rotateX = (centerY - y) / 25; 
     const rotateY = (x - centerX) / 25;
 
-    // Apply transforms directly to avoid React Re-renders
     requestAnimationFrame(() => {
         if (containerRef.current) {
             containerRef.current.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
@@ -114,17 +110,13 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
     }
   };
 
-  // Dynamic Shadow Configuration
-  const shadowColor = isDarkMode ? config.frameColor : '#000000';
-  const shadowMixBlendMode = isDarkMode ? 'normal' : 'multiply'; 
-  const deepShadowOpacity = isDarkMode ? 0.06 : 0.08; 
-  const deepShadowBlur = 'blur(24px)';
-  const midShadowOpacity = isDarkMode ? 0.02 : 0.03;
+  const shadowColor = isDarkMode ? '#000000' : '#000000';
+  const shadowMixBlendMode = 'multiply'; 
+  const deepShadowOpacity = isDarkMode ? 0.3 : 0.08; 
+  const midShadowOpacity = isDarkMode ? 0.15 : 0.03;
 
   return (
     <div className="flex-1 w-full relative font-mono isolate h-auto md:h-full">
-      
-      {/* Background Pattern */}
       <div 
         className="absolute inset-0 opacity-[0.4] dark:opacity-[0.1] pointer-events-none -z-10 transition-opacity"
         style={{
@@ -133,11 +125,9 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
         }}
       ></div>
 
-      {/* Main Wrapper */}
       <div className="relative w-full h-auto md:absolute md:inset-0 md:overflow-y-auto md:overflow-x-hidden">
         <div className="min-h-[500px] md:min-h-full flex flex-col items-center justify-center p-6 md:p-8 gap-6 md:gap-8">
             
-            {/* 3D Container */}
             <div 
                 className="relative w-full flex justify-center max-w-[400px] perspective-[1000px] cursor-grab active:cursor-grabbing"
                 onMouseMove={handleMouseMove}
@@ -145,20 +135,18 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                 onMouseLeave={handleMouseLeave}
                 style={{ perspective: '1200px' }}
             >
-                {/* Animated Wrapper */}
                 <div 
                     ref={containerRef}
                     className="relative w-full will-change-transform"
                     style={{ transformStyle: 'preserve-3d', transform: 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)' }}
                 >
-                     {/* Shadows */}
                     <div 
                         ref={deepShadowRef}
                         className="absolute w-full h-full will-change-transform"
                         style={{ 
                             top: '25px', left: '15px',
                             borderRadius: `${config.cornerRadius}px`, 
-                            filter: deepShadowBlur, backgroundColor: shadowColor,
+                            filter: 'blur(24px)', backgroundColor: shadowColor,
                             opacity: deepShadowOpacity, transform: 'translateZ(-60px)',
                             mixBlendMode: shadowMixBlendMode as any,
                         }}
@@ -175,7 +163,6 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                         }}
                     ></div>
                     
-                    {/* Capture Target */}
                     <div ref={captureRef} style={{ width: '100%', padding: '30px' }}>
                         <div
                             ref={frameRef}
@@ -185,7 +172,7 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                                 padding: '16px 16px 16px 16px',
                                 width: '100%',
                                 boxShadow: isDarkMode 
-                                    ? `0 0 0 1px ${config.frameColor}20, 0 15px 30px -10px rgba(0, 0, 0, 0.5)`
+                                    ? `0 0 0 1px ${config.frameColor}40, 0 15px 40px -10px rgba(0, 0, 0, 0.6)`
                                     : '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -5px rgba(0, 0, 0, 0.05)',
                                 border: isDarkMode ? 'none' : '1px solid rgba(0,0,0,0.02)',
                                 borderRadius: `${config.cornerRadius}px`,
@@ -193,9 +180,8 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                                 transition: 'background-color 0.3s ease',
                             }}
                         >
-                            {/* Photo Area */}
                             <div 
-                                className="w-full aspect-square overflow-hidden relative group bg-stone-100 dark:bg-black/5"
+                                className="w-full aspect-square overflow-hidden relative bg-stone-200 dark:bg-stone-900 transition-colors"
                                 style={{ borderRadius: `${Math.max(0, config.cornerRadius - 2)}px` }}
                             >
                                 {imageSrc ? (
@@ -213,23 +199,20 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                                         ref={glossRef}
                                         className="absolute -inset-[100%] pointer-events-none z-20 mix-blend-soft-light will-change-transform"
                                         style={{
-                                            background: `linear-gradient(115deg, transparent 40%, rgba(255,255,255,${isDarkMode ? 0.1 : 0.2}) 48%, rgba(255,255,255,${isDarkMode ? 0.03 : 0.08}) 52%, transparent 60%)`,
+                                            background: `linear-gradient(115deg, transparent 40%, rgba(255,255,255,${isDarkMode ? 0.05 : 0.2}) 48%, rgba(255,255,255,${isDarkMode ? 0.02 : 0.08}) 52%, transparent 60%)`,
                                             opacity: 0,
                                         }}
                                     />
                                 </>
                                 ) : (
-                                    <label className="w-full h-full flex items-center justify-center cursor-pointer group hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200">
-                                        <input type="file" accept="image/*" className="hidden" onChange={onUpload} />
-                                    </label>
+                                    <div className="w-full h-full bg-stone-300/30 dark:bg-stone-800/50"></div>
                                 )}
                             </div>
 
-                            {/* Caption Area */}
                             <div className="relative mt-4 min-h-[60px] flex flex-col pointer-events-none">
                                 {config.title && (
                                     <div 
-                                        className={`text-left leading-tight break-words ${config.isBold ? 'font-bold' : ''} ${config.isItalic ? 'italic' : ''} ${config.isUnderline ? 'underline' : ''} ${config.isStrikethrough ? 'line-through' : ''}`}
+                                        className={`text-left leading-tight break-words transition-colors ${config.isBold ? 'font-bold' : ''} ${config.isItalic ? 'italic' : ''} ${config.isUnderline ? 'underline' : ''} ${config.isStrikethrough ? 'line-through' : ''}`}
                                         style={{ 
                                             color: config.textColor, fontSize: '1rem', 
                                             fontFamily: config.fontFamily, width: '100%',
@@ -242,7 +225,7 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                                 )}
                                 {config.date && (
                                     <div 
-                                        className="absolute bottom-0 right-0 text-[10px] font-medium tracking-[0.1em] uppercase z-10"
+                                        className="absolute bottom-0 right-0 text-[10px] font-medium tracking-[0.1em] uppercase z-10 transition-colors"
                                         style={{ color: config.textColor, fontFamily: '"Roboto Mono", monospace', opacity: 0.85 }}
                                     >
                                         {config.date}
@@ -252,25 +235,23 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                         </div>
                     </div>
                     
-                    {/* Reflection */}
                     <div 
                         ref={reflectionRef}
                         className="absolute inset-0 pointer-events-none z-50 mix-blend-soft-light will-change-transform"
                         style={{
                             borderRadius: `${config.cornerRadius}px`,
-                            background: `linear-gradient(125deg, transparent 30%, rgba(255,255,255,${isDarkMode ? 0.1 : 0.2}) 45%, rgba(255,255,255,${isDarkMode ? 0.03 : 0.08}) 50%, transparent 70%)`,
+                            background: `linear-gradient(125deg, transparent 30%, rgba(255,255,255,${isDarkMode ? 0.05 : 0.2}) 45%, rgba(255,255,255,${isDarkMode ? 0.02 : 0.08}) 50%, transparent 70%)`,
                             opacity: 0,
                         }}
                     ></div>
                 </div>
             </div>
 
-            {/* Buttons */}
             <div className="w-full max-w-[400px] flex flex-col gap-2 pb-2 md:pb-0 z-10 font-sans">
                 <div className="flex gap-2 w-full">
                     <button
                         onClick={onReset}
-                        className="group relative flex-1 h-12 flex items-center justify-center overflow-hidden bg-white dark:bg-[#1E1E1E] border-2 border-stone-800 dark:border-white/20 text-stone-800 dark:text-white text-sm font-bold shadow-[3px_3px_0px_0px_rgba(28,25,23,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.1)] transition-all hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(28,25,23,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.1)] active:translate-y-[3px] active:shadow-none rounded-xl"
+                        className="group relative flex-1 h-12 flex items-center justify-center overflow-hidden bg-white dark:bg-[#1E1E1E] border-2 border-stone-800 dark:border-white text-stone-800 dark:text-white text-sm font-bold shadow-[3px_3px_0px_0px_rgba(28,25,23,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.1)] transition-all hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(28,25,23,1)] dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.1)] active:translate-y-[3px] active:shadow-none rounded-xl"
                     >
                         <div className="absolute inset-0 bg-stone-800 dark:bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out will-change-transform" />
                         <div className="relative flex items-center gap-2 z-10 group-hover:text-white dark:group-hover:text-black transition-colors duration-200">
