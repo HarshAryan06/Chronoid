@@ -12,10 +12,6 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       host: '0.0.0.0',
-      watch: {
-        // Ignore api folder (Vercel serverless functions)
-        ignored: ['**/api/**'],
-      },
     },
     plugins: [react()],
     define: {

@@ -8,7 +8,6 @@ import type { PolaroidConfig } from './types';
 import { HeaderActions, MobileHeader } from './components/layout';
 import { Sidebar } from './components/sidebar';
 import { PreviewArea } from './components/preview';
-import { VisitorCounter } from './components/ui';
 
 const App: React.FC = () => {
   const [config, setConfig] = useState<PolaroidConfig>(DEFAULT_CONFIG);
@@ -89,9 +88,6 @@ const App: React.FC = () => {
           />
         </div>
       </div>
-
-      {/* Visitor Counter - Desktop only */}
-      <VisitorCounter />
     </div>
   );
 };
