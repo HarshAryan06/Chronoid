@@ -1,9 +1,6 @@
 import type { PolaroidConfig, TextStyleOption } from '../types';
 import { formatDate } from '../utils/date';
 
-/**
- * Default polaroid configuration
- */
 export const DEFAULT_CONFIG: PolaroidConfig = {
   title: '',
   date: formatDate(new Date()),
@@ -19,9 +16,6 @@ export const DEFAULT_CONFIG: PolaroidConfig = {
   filter: 'none',
 };
 
-/**
- * Text style toggle options
- */
 export const TEXT_STYLE_OPTIONS: TextStyleOption[] = [
   { label: 'B', key: 'isBold', class: 'font-bold' },
   { label: 'I', key: 'isItalic', class: 'italic' },
@@ -29,9 +23,6 @@ export const TEXT_STYLE_OPTIONS: TextStyleOption[] = [
   { label: 'S', key: 'isStrikethrough', class: 'line-through' },
 ];
 
-/**
- * Corner radius presets
- */
 export const CORNER_RADIUS_PRESETS = [
   { value: 0, label: 'Sharp' },
   { value: 8, label: 'Soft' },

@@ -1,7 +1,3 @@
-/**
- * Constants barrel export
- */
-
 export * from './colors';
 export * from './fonts';
 export * from './filters';

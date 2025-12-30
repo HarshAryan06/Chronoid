@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Calendar as CalendarIcon, ChevronDown, Check, Plus, Filter } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronDown, Check, Plus } from 'lucide-react';
 import type { PolaroidConfig } from '../../types';
 import { TEXT_COLORS, FRAME_COLORS, FONTS, FILTERS, TEXT_STYLE_OPTIONS, CORNER_RADIUS_PRESETS } from '../../constants';
 import { getOptimalTextColor } from '../../utils/color';
 import { Calendar } from '../ui/Calendar';
 import { ColorPicker } from '../ui/ColorPicker';
+import { VisitorCount } from '../ui/VisitorCount';
 
 interface SidebarProps {
   config: PolaroidConfig;
@@ -79,7 +80,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFi
   return (
     <div className="w-full md:w-[340px] h-auto md:h-screen bg-stone-100 dark:bg-[#0f0f0f] flex flex-col items-center select-none font-sans transition-colors duration-200 border-r border-stone-200 dark:border-white/5 rounded-t-3xl md:rounded-none -mt-6 md:mt-0 relative z-30 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] md:shadow-none md:overflow-hidden">
       <div className="w-full max-w-[340px] p-6 md:p-8 flex flex-col gap-8 flex-1 md:overflow-y-auto pb-24 md:pb-20">
-        {/* Desktop Logo */}
         <div className="hidden md:block -mb-2">
           <h1 className="text-4xl text-stone-800 dark:text-stone-100 font-logo font-extrabold tracking-wide">
             Chronoid
@@ -89,7 +89,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFi
           </p>
         </div>
 
-        {/* Mobile Header */}
         <div className="md:hidden mb-1 pt-2">
           <div className="w-12 h-1.5 bg-stone-300 dark:bg-neutral-700 rounded-full mx-auto mb-4"></div>
           <h2 className="text-lg font-bold text-stone-800 dark:text-gray-100 flex items-center justify-center gap-2">
@@ -97,7 +96,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFi
           </h2>
         </div>
 
-        {/* Caption */}
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Caption</label>
@@ -111,7 +109,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFi
           />
         </div>
 
-        {/* Date */}
         <div className="space-y-3 relative" ref={calendarWrapperRef}>
           <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Date</label>
           <div
@@ -143,7 +140,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFi
           )}
         </div>
 
-        {/* Text Color */}
         <div className="space-y-3">
           <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Text Color</label>
           <div className={`${containerClasses} p-4 transition-colors`}>
@@ -177,7 +173,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFi
           </div>
         </div>
 
-        {/* Font Style */}
         <div className="space-y-3">
           <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Font Style</label>
           <div className="relative mb-3" ref={fontDropdownRef}>
@@ -234,7 +229,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFi
           </div>
         </div>
 
-        {/* Frame Color */}
         <div className="space-y-3">
           <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Frame Color</label>
           <div className={`${containerClasses} p-4 transition-colors`}>
@@ -268,7 +262,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFi
           </div>
         </div>
 
-        {/* Corner Radius */}
         <div className="space-y-3">
           <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Corner Radius</label>
           <div className={`${containerClasses} p-4 space-y-5 transition-colors`}>
@@ -306,10 +299,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFi
           </div>
         </div>
 
-        {/* Filters */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <Filter size={16} className="text-stone-800 dark:text-stone-200" />
             <label className="text-sm font-bold text-stone-800 dark:text-stone-300">Filters</label>
           </div>
           <div className={`${containerClasses} p-4 transition-colors`}>
@@ -350,6 +341,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFi
               })}
             </div>
           </div>
+        </div>
+
+        <div className="flex justify-center pt-2">
+          <VisitorCount />
         </div>
       </div>
     </div>

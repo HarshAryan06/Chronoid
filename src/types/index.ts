@@ -1,7 +1,3 @@
-/**
- * Core type definitions for the Chronoid Polaroid Editor
- */
-
 export interface PolaroidConfig {
   title: string;
   date: string;

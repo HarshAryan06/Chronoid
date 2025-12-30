@@ -1,8 +1,5 @@
 import type { FilterOption } from '../types';
 
-/**
- * Image filter presets
- */
 export const FILTERS: FilterOption[] = [
   { name: 'Normal', value: 'none', previewColor: 'bg-gray-200' },
   { name: 'Sepia', value: 'sepia(0.6) contrast(1.1)', previewColor: 'bg-amber-700' },

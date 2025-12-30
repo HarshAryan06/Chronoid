@@ -122,7 +122,6 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
           transform: 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
         }}
       >
-        {/* Deep Shadow */}
         <div
           ref={deepShadowRef}
           className="absolute w-full h-full will-change-transform"
@@ -138,7 +137,6 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
           }}
         ></div>
 
-        {/* Mid Shadow */}
         <div
           ref={midShadowRef}
           className="absolute w-full h-full will-change-transform"
@@ -154,7 +152,6 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
           }}
         ></div>
 
-        {/* Capture Area */}
         <div ref={captureRef} style={{ width: '100%', padding: '30px' }}>
           <div
             ref={frameRef}
@@ -173,7 +170,6 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
               transition: 'background-color 0.3s ease',
             }}
           >
-            {/* Image Area */}
             <div
               className="w-full aspect-square overflow-hidden relative bg-stone-100 dark:bg-black/20"
               style={{ borderRadius: `${Math.max(0, config.cornerRadius - 2)}px` }}
@@ -204,7 +200,6 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
               )}
             </div>
 
-            {/* Caption Area */}
             <div className="relative mt-4 min-h-[60px] flex flex-col pointer-events-none">
               {config.title && (
                 <div
@@ -240,7 +235,6 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
           </div>
         </div>
 
-        {/* Reflection */}
         <div
           ref={reflectionRef}
           className="absolute inset-0 pointer-events-none z-50 mix-blend-soft-light will-change-transform"

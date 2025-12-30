@@ -8,7 +8,6 @@ interface HeaderActionsProps {
 
 export const HeaderActions: React.FC<HeaderActionsProps> = ({ isDarkMode, toggleTheme }) => (
   <div className="flex items-center gap-2 md:gap-3">
-    {/* Theme Toggle */}
     <button
       onClick={toggleTheme}
       className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 md:bg-transparent md:border-2 md:border-transparent md:hover:border-stone-800 md:dark:hover:border-white backdrop-blur-md transition-all text-stone-800 dark:text-gray-200 md:text-stone-500 md:dark:text-stone-400 md:hover:text-stone-800 md:dark:hover:text-white border border-stone-800/10 dark:border-white/10 md:border-none"
@@ -21,7 +20,6 @@ export const HeaderActions: React.FC<HeaderActionsProps> = ({ isDarkMode, toggle
       )}
     </button>
 
-    {/* GitHub Link */}
     <a
       href="https://github.com/HarshAryan06"
       target="_blank"
@@ -32,7 +30,6 @@ export const HeaderActions: React.FC<HeaderActionsProps> = ({ isDarkMode, toggle
       <Github size={18} className="md:w-5 md:h-5" />
     </a>
 
-    {/* X (Twitter) Link */}
     <a
       href="https://x.com/HarshAryan06"
       target="_blank"

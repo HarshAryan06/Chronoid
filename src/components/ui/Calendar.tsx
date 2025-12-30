@@ -103,7 +103,6 @@ export const Calendar: React.FC<CalendarProps> = ({ value, onChange, onClose }) 
       className="p-4 bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-xl border border-stone-200 dark:border-white/10 w-[280px] select-none animate-in fade-in zoom-in-95 duration-200 font-sans"
       onClick={(e) => e.stopPropagation()}
     >
-      {/* Year & Month Selectors */}
       <div className="flex gap-2 mb-4">
         <div className="relative flex-[0.8]">
           <select
@@ -141,7 +140,6 @@ export const Calendar: React.FC<CalendarProps> = ({ value, onChange, onClose }) 
         </div>
       </div>
 
-      {/* Navigation */}
       <div className="flex items-center justify-between mb-4 px-1">
         <button
           type="button"
@@ -168,7 +166,6 @@ export const Calendar: React.FC<CalendarProps> = ({ value, onChange, onClose }) 
         </button>
       </div>
 
-      {/* Day Headers */}
       <div className="grid grid-cols-7 mb-2">
         {DAYS.map((d) => (
           <div
@@ -180,7 +177,6 @@ export const Calendar: React.FC<CalendarProps> = ({ value, onChange, onClose }) 
         ))}
       </div>
 
-      {/* Days Grid */}
       <div className="grid grid-cols-7 gap-1 justify-items-center">{renderDays()}</div>
     </div>
   );

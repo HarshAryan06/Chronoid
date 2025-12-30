@@ -110,7 +110,6 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => 
       className="p-3 bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-xl border border-stone-200 dark:border-white/10 w-[260px] flex flex-col gap-3 font-sans animate-in fade-in zoom-in-95 duration-200"
       onClick={(e) => e.stopPropagation()}
     >
-      {/* Color Area */}
       <div
         ref={areaRef}
         className="w-full h-32 rounded-lg relative cursor-crosshair overflow-hidden shadow-inner ring-1 ring-black/5"
@@ -130,7 +129,6 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => 
         />
       </div>
 
-      {/* Hue Slider */}
       <div className="flex items-center gap-3">
         {'EyeDropper' in window && (
           <button
@@ -165,7 +163,6 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => 
         </div>
       </div>
 
-      {/* Hex Input */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex-1 flex items-center gap-2 bg-stone-50 dark:bg-black/30 border border-stone-200 dark:border-white/10 rounded-lg px-2 h-9">
           <span className="text-xs font-bold text-stone-400 dark:text-stone-500">HEX</span>

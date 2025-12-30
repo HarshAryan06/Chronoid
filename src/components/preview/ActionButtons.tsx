@@ -17,7 +17,6 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
   return (
     <div className="w-full max-w-[400px] flex flex-col gap-2 pb-2 md:pb-0 z-10 font-sans pointer-events-auto">
       <div className="flex gap-2 w-full">
-        {/* Reset Button */}
         <button
           onClick={onReset}
           className="group relative flex-1 h-12 flex items-center justify-center overflow-hidden bg-white dark:bg-[#1E1E1E] border-2 border-stone-800 dark:border-white/20 text-stone-800 dark:text-white text-sm font-bold shadow-[3px_3px_0px_0px_rgba(28,25,23,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.1)] transition-all hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(28,25,23,1)] active:translate-y-[3px] active:shadow-none rounded-xl"
@@ -33,7 +32,6 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
           </div>
         </button>
 
-        {/* Upload Button */}
         <label className="flex-1 h-12 flex items-center justify-center gap-2 bg-stone-800 dark:bg-white border-2 border-stone-800 dark:border-white text-white dark:text-black text-sm font-bold shadow-[3px_3px_0px_0px_rgba(28,25,23,0.25)] hover:translate-y-[1px] active:translate-y-[3px] active:shadow-none transition-all cursor-pointer rounded-xl">
           <Upload size={14} strokeWidth={2.5} />
           Upload
@@ -41,7 +39,6 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
         </label>
       </div>
 
-      {/* Download Button */}
       <button
         onClick={onDownload}
         disabled={!imageSrc}

@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import { flushSync } from 'react-dom';
 
-/**
- * Hook to manage dark/light theme with view transition animation
- */
 export function useTheme() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 

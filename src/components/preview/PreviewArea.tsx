@@ -24,7 +24,6 @@ export const PreviewArea: React.FC<PreviewAreaProps> = ({
 }) => {
   return (
     <div className="flex-1 w-full relative font-mono isolate h-auto md:h-full">
-      {/* Dot Pattern Background */}
       <div
         className="absolute inset-0 opacity-[0.4] dark:opacity-[0.1] pointer-events-none -z-10 transition-opacity"
         style={{

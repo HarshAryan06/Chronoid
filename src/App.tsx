@@ -67,14 +67,11 @@ const App: React.FC = () => {
           />
         </div>
 
-        {/* Preview Area */}
         <div className="order-1 md:order-2 flex-1 relative flex flex-col min-h-0 bg-sand dark:bg-[#0a0a0a]">
-          {/* Desktop Header Actions */}
           <div className="absolute top-6 right-6 z-30 hidden md:flex">
             <HeaderActions isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
           </div>
 
-          {/* Mobile Spacer */}
           <div className="md:hidden h-24 w-full bg-transparent shrink-0" />
 
           <PreviewArea

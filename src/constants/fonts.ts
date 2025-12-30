@@ -1,8 +1,5 @@
 import type { FontOption } from '../types';
 
-/**
- * Available font options for the polaroid caption
- */
 export const FONTS: FontOption[] = [
   { name: 'Nunito', value: '"Nunito", sans-serif' },
   { name: 'Patrick Hand', value: '"Patrick Hand", cursive' },

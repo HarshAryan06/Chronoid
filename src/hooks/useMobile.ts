@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react';
 
-/**
- * Hook to detect mobile viewport
- */
 export function useMobile(breakpoint: number = 768): boolean {
   const [isMobile, setIsMobile] = useState(false);
 

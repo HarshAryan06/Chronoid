@@ -1,8 +1,5 @@
 import { useEffect, RefObject } from 'react';
 
-/**
- * Hook to detect clicks outside of specified elements
- */
 export function useClickOutside(
   refs: RefObject<HTMLElement | null>[],
   handler: () => void,

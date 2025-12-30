@@ -1,7 +1,3 @@
-/**
- * Color palette constants
- */
-
 export const TEXT_COLORS = [
   '#000000',
   '#292524',
