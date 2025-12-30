@@ -1,8 +1,14 @@
 import { PolaroidConfig, FilterOption, FontOption } from './types';
 
+const today = new Date();
+const dd = String(today.getDate()).padStart(2, '0');
+const mm = String(today.getMonth() + 1).padStart(2, '0');
+const yyyy = today.getFullYear();
+const currentDate = `${dd}.${mm}.${yyyy}`;
+
 export const DEFAULT_CONFIG: PolaroidConfig = {
   title: '',
-  date: '',
+  date: currentDate,
   textColor: '#292524', // Default to Stone 800
   backgroundColor: '#ffffff',
   frameColor: '#ffffff',
