@@ -108,7 +108,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
 
   return (
     <div
-      className="relative w-full flex justify-center max-w-[400px] perspective-[1000px] select-none pointer-events-none"
+      className="relative w-full flex justify-center max-w-[340px] md:max-w-[320px] perspective-[1000px] select-none pointer-events-none"
       style={{ perspective: '1200px' }}
     >
       <div

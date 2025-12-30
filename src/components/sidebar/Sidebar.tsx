@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Calendar as CalendarIcon, ChevronDown, Check, Plus } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronDown, Check, Plus, Coffee } from 'lucide-react';
 import type { PolaroidConfig } from '../../types';
 import { TEXT_COLORS, FRAME_COLORS, FONTS, FILTERS, TEXT_STYLE_OPTIONS, CORNER_RADIUS_PRESETS } from '../../constants';
 import { getOptimalTextColor } from '../../utils/color';
@@ -77,8 +77,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFi
     'w-full border-2 border-stone-800 dark:border-stone-200 rounded-xl bg-white dark:bg-[#1E1E1E] shadow-[2px_2px_0px_0px_rgba(28,25,23,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)] transition-all';
 
   return (
-    <div className="w-full md:w-[340px] h-auto md:h-screen bg-stone-100 dark:bg-[#0f0f0f] flex flex-col items-center select-none font-sans transition-colors duration-200 border-r border-stone-200 dark:border-white/5 rounded-t-3xl md:rounded-none -mt-6 md:mt-0 relative z-30 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] md:shadow-none md:overflow-hidden">
-      <div className="w-full max-w-[340px] p-6 md:p-8 flex flex-col gap-8 flex-1 md:overflow-y-auto pb-24 md:pb-20">
+    <div className="w-full md:w-[360px] h-auto md:h-screen md:p-3 md:pr-0 flex flex-col items-center select-none font-sans transition-colors duration-200 rounded-t-3xl md:rounded-none -mt-6 md:mt-0 relative z-30 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] md:shadow-none">
+      <div className="w-full h-full bg-stone-100 dark:bg-[#0f0f0f] md:rounded-2xl md:border md:border-stone-200 md:dark:border-white/10 md:shadow-lg flex flex-col">
+      <div className="w-full max-w-[340px] mx-auto p-6 md:p-6 flex flex-col gap-8 flex-1 md:overflow-y-auto pb-8 md:pb-8">
         <div className="hidden md:block -mb-2">
           <h1 className="text-4xl text-stone-800 dark:text-stone-100 font-logo font-extrabold tracking-wide">
             Chronoid
@@ -341,6 +342,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFi
             </div>
           </div>
         </div>
+
+        <div className="md:hidden text-sm text-stone-500 dark:text-stone-400 flex items-center justify-center gap-1.5">
+          Built with <Coffee size={14} className="text-amber-600" /> by Harsh
+        </div>
+      </div>
       </div>
     </div>
   );
