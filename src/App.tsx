@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import * as htmlToImage from 'html-to-image';
+import { Analytics } from '@vercel/analytics/react';
 
 import { useTheme } from './hooks';
 import { DEFAULT_CONFIG } from './constants';
@@ -8,6 +9,7 @@ import type { PolaroidConfig } from './types';
 import { HeaderActions, MobileHeader } from './components/layout';
 import { Sidebar } from './components/sidebar';
 import { PreviewArea } from './components/preview';
+import { LiveVisitorCounter } from './components/ui';
 
 const App: React.FC = () => {
   const [config, setConfig] = useState<PolaroidConfig>(DEFAULT_CONFIG);
@@ -88,6 +90,12 @@ const App: React.FC = () => {
           />
         </div>
       </div>
+
+      {/* Live Visitor Counter - Desktop only */}
+      <LiveVisitorCounter />
+      
+      {/* Vercel Analytics */}
+      <Analytics />
     </div>
   );
 };
