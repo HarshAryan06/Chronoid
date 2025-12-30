@@ -5,7 +5,6 @@ import { TEXT_COLORS, FRAME_COLORS, FONTS, FILTERS, TEXT_STYLE_OPTIONS, CORNER_R
 import { getOptimalTextColor } from '../../utils/color';
 import { Calendar } from '../ui/Calendar';
 import { ColorPicker } from '../ui/ColorPicker';
-import { VisitorCount } from '../ui/VisitorCount';
 
 interface SidebarProps {
   config: PolaroidConfig;
@@ -341,10 +340,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ config, setConfig, onPreviewFi
               })}
             </div>
           </div>
-        </div>
-
-        <div className="flex justify-center pt-2">
-          <VisitorCount />
         </div>
       </div>
     </div>

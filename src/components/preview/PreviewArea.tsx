@@ -2,6 +2,7 @@ import React from 'react';
 import type { PolaroidConfig } from '../../types';
 import { PolaroidCard } from './PolaroidCard';
 import { ActionButtons } from './ActionButtons';
+import { VisitorCount } from '../ui/VisitorCount';
 
 interface PreviewAreaProps {
   config: PolaroidConfig;
@@ -33,6 +34,9 @@ export const PreviewArea: React.FC<PreviewAreaProps> = ({
       ></div>
 
       <div className="relative w-full h-auto md:absolute md:inset-0 md:overflow-y-auto md:overflow-x-hidden">
+        <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20">
+          <VisitorCount />
+        </div>
         <div className="min-h-[500px] md:min-h-full flex flex-col items-center justify-center p-6 md:p-8 gap-6 md:gap-8">
           <PolaroidCard
             config={config}
