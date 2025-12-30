@@ -5,23 +5,60 @@ interface VisitorCounterProps {
   className?: string;
 }
 
+// API endpoint - uses relative path in production, full URL in development
+const API_URL = import.meta.env.DEV 
+  ? '/api/visitors' 
+  : '/api/visitors';
+
 export const VisitorCounter: React.FC<VisitorCounterProps> = ({ className = '' }) => {
   const [count, setCount] = useState<number | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Simulate loading and animate in
-    const timer = setTimeout(() => {
-      // For now, using localStorage to simulate a basic counter
-      // Replace this with actual Vercel KV or API call later
-      const storedCount = localStorage.getItem('chronoid_visitor_count');
-      const currentCount = storedCount ? parseInt(storedCount, 10) : 0;
-      const newCount = currentCount + 1;
-      localStorage.setItem('chronoid_visitor_count', newCount.toString());
-      setCount(newCount);
-      setIsVisible(true);
-    }, 1000);
+    const trackVisitor = async () => {
+      try {
+        // Check if we've already tracked this session
+        const hasTracked = sessionStorage.getItem('chronoid_tracked');
 
+        if (!hasTracked) {
+          // POST to register this visitor (only once per session)
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          const data = await response.json();
+          
+          if (data.success) {
+            sessionStorage.setItem('chronoid_tracked', 'true');
+            setCount(data.count);
+          } else {
+            throw new Error('API returned unsuccessful');
+          }
+        } else {
+          // GET to just fetch the current count
+          const response = await fetch(API_URL);
+          const data = await response.json();
+          setCount(data.count);
+        }
+
+        setIsVisible(true);
+      } catch (error) {
+        console.error('Failed to track visitor:', error);
+        // Fallback for local development or API failure
+        const fallbackCount = localStorage.getItem('chronoid_fallback_count');
+        const currentCount = fallbackCount ? parseInt(fallbackCount, 10) : 1;
+        
+        if (!sessionStorage.getItem('chronoid_tracked')) {
+          localStorage.setItem('chronoid_fallback_count', (currentCount + 1).toString());
+          sessionStorage.setItem('chronoid_tracked', 'true');
+        }
+        
+        setCount(currentCount);
+        setIsVisible(true);
+      }
+    };
+
+    const timer = setTimeout(trackVisitor, 500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -47,7 +84,7 @@ export const VisitorCounter: React.FC<VisitorCounterProps> = ({ className = '' }
         {count.toLocaleString()}
       </span>
       <span className="text-xs text-stone-400 dark:text-neutral-500">
-        views
+        visitors
       </span>
     </div>
   );
