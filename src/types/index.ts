@@ -1,3 +1,7 @@
+/**
+ * Core type definitions for the Chronoid Polaroid Editor
+ */
+
 export interface PolaroidConfig {
   title: string;
   date: string;
@@ -10,7 +14,7 @@ export interface PolaroidConfig {
   isUnderline: boolean;
   isStrikethrough: boolean;
   cornerRadius: number;
-  filter: string; // CSS filter string
+  filter: string;
 }
 
 export interface FilterOption {
@@ -23,3 +27,10 @@ export interface FontOption {
   name: string;
   value: string;
 }
+
+export interface TextStyleOption {
+  label: string;
+  key: keyof PolaroidConfig;
+  class: string;
+}
+
